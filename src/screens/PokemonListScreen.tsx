@@ -1,6 +1,7 @@
 import { PokemonCard } from "@app/components/PokemonCard";
+import { FlashList } from "@shopify/flash-list";
 import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Pokemon {
   id: string;
@@ -24,9 +25,26 @@ const POKEMON: Pokemon[] = [
     imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
     name: "Venusaur",
   },
+  {
+    id: "004",
+    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png",
+    name: "Charmander",
+  },
+  {
+    id: "005",
+    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png",
+    name: "Charmeleon",
+  },
+  {
+    id: "006",
+    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
+    name: "Charizard",
+  },
 ];
 
 export const PokemonListScreen = () => {
+  const { bottom } = useSafeAreaInsets();
+
   return (
     <SafeAreaView className="flex-1" edges={["top", "right", "left"]}>
       <View className="flex-1 flex-col px-6">
@@ -37,11 +55,18 @@ export const PokemonListScreen = () => {
           and start your journey!
         </Text>
 
-        <View className="flex flex-wrap flex-row justify-between gap-y-6 mt-6">
-          {POKEMON.map((pokemon) => (
-            <PokemonCard key={pokemon.id} {...pokemon} />
-          ))}
-        </View>
+        <FlashList
+          className="pt-10"
+          contentContainerStyle={{ paddingBottom: bottom }}
+          data={POKEMON}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <View className="flex-1 items-center pb-10">
+              <PokemonCard {...item} />
+            </View>
+          )}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
     </SafeAreaView>
   );
