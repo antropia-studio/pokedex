@@ -1,4 +1,5 @@
-import { Image, Text, View } from "react-native";
+import { PokemonCard } from "@app/components/PokemonCard";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const PokemonListScreen = () => {
@@ -12,17 +13,24 @@ export const PokemonListScreen = () => {
           and start your journey!
         </Text>
 
-        <View className="bg-grass w-2/5 rounded-xl justify-center items-center p-4 mt-6">
-          <Image
-            height={100}
-            source={{
-              uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
-            }}
-            width={100}
+        <View className="flex flex-wrap flex-row justify-between gap-y-6 mt-6">
+          <PokemonCard
+            id="001"
+            imageUri="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+            name="Bulbasaur"
           />
 
-          <Text className="font-bold mt-4 mb-2">Bulbasaur</Text>
-          <Text className="text-blue-950">001</Text>
+          <PokemonCard
+            id="002"
+            imageUri="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
+            name="Ivysaur"
+          />
+
+          <PokemonCard
+            id="003"
+            imageUri="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png"
+            name="Venusaur"
+          />
         </View>
       </View>
     </SafeAreaView>
