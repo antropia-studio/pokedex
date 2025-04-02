@@ -23,7 +23,13 @@ export default tseslint.config(
   ...prettierConfig,
   perfectionist.configs["recommended-natural"],
   {
-    ignores: ["**/node_modules/**/*", "**/android/**/*", "**/ios/**/*", ".commitlintrc.js", "*.config.js"],
+    ignores: [
+      "**/node_modules/**/*",
+      "**/android/**/*",
+      "**/ios/**/*",
+      "babel.config.js",
+      "metro.config.js",
+    ],
     plugins: { "json-files": jsonFiles, prettier },
     rules: {
       "json-files/sort-package-json": "error",
@@ -32,5 +38,5 @@ export default tseslint.config(
       "perfectionist/sort-objects": "error",
       "prettier/prettier": "error",
     },
-  }
+  },
 );
