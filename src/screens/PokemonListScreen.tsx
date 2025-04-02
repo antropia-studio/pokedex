@@ -2,6 +2,30 @@ import { PokemonCard } from "@app/components/PokemonCard";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+interface Pokemon {
+  id: string;
+  imageUri: string;
+  name: string;
+}
+
+const POKEMON: Pokemon[] = [
+  {
+    id: "001",
+    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
+    name: "Bulbasaur",
+  },
+  {
+    id: "002",
+    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png",
+    name: "Ivysaur",
+  },
+  {
+    id: "003",
+    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
+    name: "Venusaur",
+  },
+];
+
 export const PokemonListScreen = () => {
   return (
     <SafeAreaView className="flex-1" edges={["top", "right", "left"]}>
@@ -14,23 +38,9 @@ export const PokemonListScreen = () => {
         </Text>
 
         <View className="flex flex-wrap flex-row justify-between gap-y-6 mt-6">
-          <PokemonCard
-            id="001"
-            imageUri="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-            name="Bulbasaur"
-          />
-
-          <PokemonCard
-            id="002"
-            imageUri="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
-            name="Ivysaur"
-          />
-
-          <PokemonCard
-            id="003"
-            imageUri="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png"
-            name="Venusaur"
-          />
+          {POKEMON.map((pokemon) => (
+            <PokemonCard key={pokemon.id} {...pokemon} />
+          ))}
         </View>
       </View>
     </SafeAreaView>
