@@ -6,6 +6,10 @@ export default {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        grass: "#B7E5B8",
+      },
+    },
   },
 } satisfies Config;

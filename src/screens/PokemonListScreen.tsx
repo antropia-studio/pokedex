@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const PokemonListScreen = () => {
@@ -12,7 +12,18 @@ export const PokemonListScreen = () => {
           and start your journey!
         </Text>
 
-        <View className="bg-gray-300 flex-1 mt-10" />
+        <View className="bg-grass w-2/5 rounded-xl justify-center items-center p-4 mt-6">
+          <Image
+            height={100}
+            source={{
+              uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
+            }}
+            width={100}
+          />
+
+          <Text className="font-bold mt-4 mb-2">Bulbasaur</Text>
+          <Text className="text-blue-950">001</Text>
+        </View>
       </View>
     </SafeAreaView>
   );
