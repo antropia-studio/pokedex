@@ -19,28 +19,25 @@ const STATS = [
 export const PokemonDetailScreen = ({
   navigation,
   route,
-  // @ts-expect-error Not implemented
 }: NativeStackScreenProps<NavigationParamList, "pokemonDetail">) => {
   const { top } = useSafeAreaInsets();
-  // @ts-expect-error Not implemented
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { pokemon } = route.params;
 
   return (
     <SafeAreaView className="flex-1 flex-col" edges={["right", "left"]}>
-      <View className="flex-col gap-4" style={{ paddingTop: top }}>
+      <View className="flex-col gap-4" style={{ backgroundColor: pokemon.color, paddingTop: top }}>
         <View className="flex-row px-6 items-center gap-4">
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Feather color="#000" name="chevron-left" size={44} />
           </TouchableOpacity>
-          <Text className="text-4xl font-black py-4">n̸͙̏ö̴̢́ṱ̶̈́ ̶̟̑î̵̭m̸̬͂p̸̮̓l̶̖̀ë̴̠́m̶̺̈́ȩ̶͒n̶̪̿t̵̬̚e̵͇̔d̶̨͠</Text>
+          <Text className="text-4xl font-black py-4">{pokemon.name}</Text>
         </View>
 
         <View className="mb-10">
           <Image
             className="self-center"
             height={Dimensions.get("screen").width - 150}
-            source={{ uri: undefined }}
+            source={{ uri: pokemon.imageUri }}
             width={Dimensions.get("screen").width - 150}
           />
         </View>

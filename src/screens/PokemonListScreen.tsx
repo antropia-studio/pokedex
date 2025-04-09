@@ -63,8 +63,7 @@ const POKEMON: Pokemon[] = [
   },
 ];
 
-// eslint-disable-next-line no-empty-pattern
-export const PokemonListScreen = ({}: NativeStackScreenProps<NavigationParamList, "pokemonList">) => {
+export const PokemonListScreen = ({ navigation }: NativeStackScreenProps<NavigationParamList, "pokemonList">) => {
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -84,7 +83,12 @@ export const PokemonListScreen = ({}: NativeStackScreenProps<NavigationParamList
           estimatedItemSize={211}
           numColumns={2}
           renderItem={({ item }) => (
-            <TouchableOpacity className="flex-1 items-center pb-10" onPress={() => {}}>
+            <TouchableOpacity
+              className="flex-1 items-center pb-10"
+              onPress={() => {
+                navigation.navigate("pokemonDetail", { pokemon: item });
+              }}
+            >
               <PokemonCard {...item} />
             </TouchableOpacity>
           )}
