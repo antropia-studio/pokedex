@@ -1,7 +1,8 @@
 import { PokemonCard } from "@app/components/PokemonCard";
 import { Pokemon } from "@app/models/pokemon";
+import { NavigationParamList } from "@app/routes";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FlashList } from "@shopify/flash-list";
-import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -62,8 +63,8 @@ const POKEMON: Pokemon[] = [
   },
 ];
 
-export const PokemonListScreen = () => {
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+// eslint-disable-next-line no-empty-pattern
+export const PokemonListScreen = ({}: NativeStackScreenProps<NavigationParamList, "pokemonList">) => {
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -81,11 +82,10 @@ export const PokemonListScreen = () => {
           contentContainerStyle={{ paddingBottom: bottom }}
           data={POKEMON}
           estimatedItemSize={211}
-          extraData={selectedIndex}
           numColumns={2}
-          renderItem={({ index, item }) => (
-            <TouchableOpacity className="flex-1 items-center pb-10" onPress={() => setSelectedIndex(index)}>
-              <PokemonCard isSelected={selectedIndex === index} {...item} />
+          renderItem={({ item }) => (
+            <TouchableOpacity className="flex-1 items-center pb-10" onPress={() => {}}>
+              <PokemonCard {...item} />
             </TouchableOpacity>
           )}
           showsVerticalScrollIndicator={false}

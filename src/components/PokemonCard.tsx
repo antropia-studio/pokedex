@@ -1,17 +1,15 @@
 import { Pokemon } from "@app/models/pokemon";
 import { Image, Text, View } from "react-native";
 
-interface Props extends Pokemon {
-  isSelected: boolean;
-}
+type Props = Pokemon;
 
-export const PokemonCard = ({ color, id, imageUri, isSelected, name }: Props) => {
+export const PokemonCard = ({ color, id, imageUri, name }: Props) => {
   return (
     <View
       className="rounded-xl justify-center items-center p-4"
       style={{
-        backgroundColor: isSelected ? "#FFF1A2" : color,
-        borderColor: isSelected ? "#AAA172" : color,
+        backgroundColor: color,
+        borderColor: color,
         borderWidth: 1,
       }}
     >
