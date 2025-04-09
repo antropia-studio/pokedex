@@ -1,20 +1,26 @@
 import { NavigationParamList } from "@app/routes";
 import { Feather } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+
+interface ApiPokemon {
+  description: string;
+  id: string;
+  stats: PokemonStat[];
+}
+
+interface ApiPokemonResponse {
+  id: string;
+  species: { url: string };
+  stats: { base_stat: number; stat: { name: string } }[];
+}
 
 type PokemonStat = {
   name: string;
   value: number | string;
 };
-
-const STATS = [
-  { name: "Type", value: "Fire" },
-  { name: "Weight", value: 85 },
-  { name: "HP", value: 39 },
-  { name: "Attack", value: 52 },
-] satisfies PokemonStat[];
 
 export const PokemonDetailScreen = ({
   navigation,
@@ -22,6 +28,25 @@ export const PokemonDetailScreen = ({
 }: NativeStackScreenProps<NavigationParamList, "pokemonDetail">) => {
   const { top } = useSafeAreaInsets();
   const { pokemon } = route.params;
+
+  const { data, isPending } = useQuery({
+    queryFn: async (): Promise<ApiPokemon> => {
+      const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${Number(pokemon.id)}`);
+      const pokemonResponseJson: ApiPokemonResponse = await pokemonResponse.json();
+
+      const pokemonSpeciesResponse = await fetch(pokemonResponseJson.species.url);
+      const pokemonSpeciesResponseJson = await pokemonSpeciesResponse.json();
+
+      const description = pokemonSpeciesResponseJson.flavor_text_entries[0].flavor_text.replace(/\n/g, " ");
+      const stats: PokemonStat[] = pokemonResponseJson.stats.map((stat) => ({
+        name: stat.stat.name,
+        value: stat.base_stat,
+      }));
+
+      return { ...pokemonResponseJson, description, stats };
+    },
+    queryKey: ["pokemon", pokemon.id],
+  });
 
   return (
     <SafeAreaView className="flex-1 flex-col" edges={["right", "left"]}>
@@ -43,20 +68,28 @@ export const PokemonDetailScreen = ({
         </View>
       </View>
 
-      <View className="px-10 pt-8">
-        <Text className="text-xl">n̸͙̏ö̴̢́ṱ̶̈́ ̶̟̑î̵̭m̸̬͂p̸̮̓l̶̖̀ë̴̠́m̶̺̈́ȩ̶͒n̶̪̿t̵̬̚e̵͇̔d̶̨͠</Text>
+      {isPending ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <>
+          <View className="px-10 pt-8">
+            <Text className="text-xl">{data?.description}</Text>
 
-        <View className="h-px bg-gray-300 mt-10" />
-      </View>
-
-      <ScrollView className="flex-1" contentContainerClassName="py-10 gap-2 flex-col">
-        {STATS.map(({ name, value }) => (
-          <View className="flex-row gap-4" key={name}>
-            <Text className="flex-1 text-2xl text-right font-bold">{name}</Text>
-            <Text className="flex-1 text-2xl text-left">{value}</Text>
+            <View className="h-px bg-gray-300 mt-4" />
           </View>
-        ))}
-      </ScrollView>
+
+          <ScrollView className="flex-1" contentContainerClassName="py-10 gap-2 flex-col">
+            {data?.stats.map(({ name, value }) => (
+              <View className="flex-row gap-4" key={name}>
+                <Text className="flex-1 text-2xl text-right font-bold">{name}</Text>
+                <Text className="flex-1 text-2xl text-left">{value}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </>
+      )}
     </SafeAreaView>
   );
 };

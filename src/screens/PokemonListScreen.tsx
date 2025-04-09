@@ -1,70 +1,35 @@
 import { PokemonCard } from "@app/components/PokemonCard";
-import { Pokemon } from "@app/models/pokemon";
 import { NavigationParamList } from "@app/routes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FlashList } from "@shopify/flash-list";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
-const POKEMON: Pokemon[] = [
-  {
-    color: "#B7E5B8",
-    id: "001",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
-    name: "Bulbasaur",
-  },
-  {
-    color: "#B7E5B8",
-    id: "002",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png",
-    name: "Ivysaur",
-  },
-  {
-    color: "#B7E5B8",
-    id: "003",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
-    name: "Venusaur",
-  },
-  {
-    color: "#E5B7B8",
-    id: "004",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png",
-    name: "Charmander",
-  },
-  {
-    color: "#E5B7B8",
-    id: "005",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png",
-    name: "Charmeleon",
-  },
-  {
-    color: "#E5B7B8",
-    id: "006",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
-    name: "Charizard",
-  },
-  {
-    color: "#B8B7E7",
-    id: "007",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png",
-    name: "Squirtle",
-  },
-  {
-    color: "#B8B7E7",
-    id: "008",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png",
-    name: "Wartortle",
-  },
-  {
-    color: "#B8B7E7",
-    id: "009",
-    imageUri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/9.png",
-    name: "Blastoise",
-  },
-];
+interface ApiPokemon {
+  results: { url: string }[];
+}
 
 export const PokemonListScreen = ({ navigation }: NativeStackScreenProps<NavigationParamList, "pokemonList">) => {
   const { bottom } = useSafeAreaInsets();
+
+  const { data, isPending } = useQuery({
+    queryFn: async () => {
+      const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
+      const responseJson: ApiPokemon = await response.json();
+
+      const promises = await Promise.all(
+        responseJson.results.map((result) => fetch(result.url).then((response) => response.json()))
+      );
+
+      return promises.map((pokemon) => ({
+        ...pokemon,
+        color: "#B7E5B8",
+        imageUri: pokemon.sprites.other["official-artwork"]["front_default"],
+      }));
+    },
+    queryKey: ["pokemon"],
+  });
 
   return (
     <SafeAreaView className="flex-1" edges={["top", "right", "left"]}>
@@ -76,24 +41,30 @@ export const PokemonListScreen = ({ navigation }: NativeStackScreenProps<Navigat
           and start your journey!
         </Text>
 
-        <FlashList
-          className="pt-10"
-          contentContainerStyle={{ paddingBottom: bottom }}
-          data={POKEMON}
-          estimatedItemSize={211}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className="flex-1 items-center pb-10"
-              onPress={() => {
-                navigation.navigate("pokemonDetail", { pokemon: item });
-              }}
-            >
-              <PokemonCard {...item} />
-            </TouchableOpacity>
-          )}
-          showsVerticalScrollIndicator={false}
-        />
+        {isPending ? (
+          <View className="flex-1 justify-center">
+            <ActivityIndicator size="large" />
+          </View>
+        ) : (
+          <FlashList
+            className="pt-10"
+            contentContainerStyle={{ paddingBottom: bottom }}
+            data={data}
+            estimatedItemSize={211}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="flex-1 items-center pb-10"
+                onPress={() => {
+                  navigation.navigate("pokemonDetail", { pokemon: item });
+                }}
+              >
+                <PokemonCard {...item} />
+              </TouchableOpacity>
+            )}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
